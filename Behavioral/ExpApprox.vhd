@@ -22,7 +22,6 @@ END ExpApprox;
 
 ARCHITECTURE Behavioral OF ExpApprox IS
     	CONSTANT K_INV : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(9872, DATA_WIDTH);
-
     	TYPE lut_type IS ARRAY (1 TO N) OF signed(DATA_WIDTH-1 DOWNTO 0);
     	CONSTANT LUT : lut_type := (
         	to_signed(4500, 16), -- i=1
@@ -123,3 +122,4 @@ BEGIN
         	END CASE;
     	END PROCESS;
 END Behavioral;
+
