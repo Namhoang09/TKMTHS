@@ -62,8 +62,10 @@ PACKAGE Mylib IS
             		start   : IN  std_logic;
         			t     	: IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 
+					done    : OUT std_logic;
         			exp  	: OUT std_logic_vector(DATA_WIDTH-1 DOWNTO 0)
     		);
 	END COMPONENT;
 END Mylib;
+
 
