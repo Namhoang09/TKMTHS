@@ -9,7 +9,7 @@ ARCHITECTURE Behavioral OF ExpApprox_tb IS
     	COMPONENT ExpApprox
         	GENERIC (
             		DATA_WIDTH  	: integer := 16;
-            		N		: integer := 13
+            		N		        : integer := 13
         	);
 
         	PORT (
@@ -17,6 +17,7 @@ ARCHITECTURE Behavioral OF ExpApprox_tb IS
             		rst      : IN  std_logic;
             		start    : IN  std_logic;
             		t        : IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
+                
             		done     : OUT std_logic;
             		exp      : OUT std_logic_vector(DATA_WIDTH-1 DOWNTO 0)
         	);
@@ -96,3 +97,4 @@ BEGIN
         WAIT;
     END PROCESS;
 END Behavioral;
+
