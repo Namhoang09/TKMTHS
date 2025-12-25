@@ -11,14 +11,14 @@ ENTITY Datapath IS
 
 	PORT (
 		clk 	: IN  std_logic;
-            	rst 	: IN  std_logic;
-            	Sel 	: IN  std_logic;
-            	En      : IN  std_logic;
-            	exp_ld  : IN  std_logic;
-            	i	: IN  integer RANGE 1 TO N;            
-            	t       : IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
+        rst 	: IN  std_logic;
+        Sel 	: IN  std_logic;
+        En      : IN  std_logic;
+        exp_ld  : IN  std_logic;
+        i		: IN  integer RANGE 1 TO N;            
+        t       : IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 
-            	exp     : OUT std_logic_vector(DATA_WIDTH-1 DOWNTO 0)
+        exp     : OUT std_logic_vector(DATA_WIDTH-1 DOWNTO 0)
 
 	);
 END Datapath;
@@ -55,8 +55,8 @@ ARCHITECTURE Structural OF Datapath IS
 BEGIN
 
 	X_next <= std_logic_vector(INV_K) WHEN Sel = '1' ELSE std_logic_vector(X_calc);
-	Y_next <= (others => '0') 	  WHEN Sel = '1' ELSE std_logic_vector(Y_calc);
-	Z_next <= t 			  WHEN Sel = '1' ELSE std_logic_vector(Z_calc);
+	Y_next <= (others => '0') 	  	  WHEN Sel = '1' ELSE std_logic_vector(Y_calc);
+	Z_next <= t 			          WHEN Sel = '1' ELSE std_logic_vector(Z_calc);
 
 	X <= signed(X_cur);
 	Y <= signed(Y_cur);
@@ -85,14 +85,16 @@ BEGIN
 	RegX: Reg_n 
 		GENERIC MAP (DATA_WIDTH) 
 		PORT MAP (clk, rst, En, X_next, X_cur);
-    	RegY: Reg_n 
+    RegY: Reg_n 
 		GENERIC MAP (DATA_WIDTH) 
 		PORT MAP (clk, rst, En, Y_next, Y_cur);
-    	RegZ: Reg_n 
+    RegZ: Reg_n 
 		GENERIC MAP (DATA_WIDTH) 
 		PORT MAP (clk, rst, En, Z_next, Z_cur);
 	--RegExp: Reg_n
 		--GENERIC MAP (DATA_WIDTH) 
 		--PORT MAP (clk, rst, exp_ld, exp_calc, exp);
+			
 	exp <= std_logic_vector(X + Y) WHEN (exp_ld = '1') ELSE (others => '0');
 END Structural;
+
