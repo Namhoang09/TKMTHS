@@ -1,4 +1,4 @@
-#ExpApprox: Bộ Tính Hàm Mũ $e^t$ Trên FPGA Sử Dụng CORDIC
+# ExpApprox: Bộ Tính Hàm Mũ $e^t$ Trên FPGA Sử Dụng CORDIC
 1. Giới thiệu
 Dự án thiết kế mô-đun phần cứng (Hardware Module) sử dụng ngôn ngữ VHDL để tính giá trị xấp xỉ của hàm mũ tự nhiên:
 $$Output = e^t$$
