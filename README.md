@@ -2,11 +2,11 @@
 
 1. Giới thiệu
 
-Dự án thiết kế mô-đun phần cứng (Hardware Module) sử dụng ngôn ngữ VHDL để tính giá trị xấp xỉ của hàm mũ tự nhiên:
+Dự án thiết kế mô-đun phần cứng (Hardware Module) sử dụng ngôn ngữ VHDL để tính giá trị xấp xỉ của hàm mũ tự nhiên: $$Output = e^t$$
 
-$$Output = e^t$$
+Thuật toán được sử dụng là CORDIC (Coordinate Rotation Digital Computer) ở chế độ Hyperbolic Vectoring. 
 
-Thuật toán được sử dụng là CORDIC (Coordinate Rotation Digital Computer) ở chế độ Hyperbolic Vectoring. Thiết kế được tối ưu hóa cho FPGA với kiến trúc không sử dụng bộ nhân, chỉ sử dụng phép cộng, trừ và dịch bit để tiết kiệm tài nguyên phần cứng.
+Thiết kế được tối ưu hóa cho FPGA với kiến trúc không sử dụng bộ nhân, chỉ sử dụng phép cộng, trừ và dịch bit để tiết kiệm tài nguyên phần cứng.
 
 2. Thông số kỹ thuật
 - Ngôn ngữ thiết kế: VHDL (IEEE 1164, Numeric_std).
@@ -15,7 +15,7 @@ Thuật toán được sử dụng là CORDIC (Coordinate Rotation Digital Compu
   + 2 bit phần nguyên.
   + 13 bit phần thập phân.
   + Ví dụ: $1.0$ được biểu diễn là $8192$ (0010 0000 0000 0000).
-- Phạm vi đầu vào: $-4 \le t < 4$ (Thực tế tốt nhất trong khoảng $-1.5$ đến $1.5$ để đảm bảo độ chính xác).
+- Phạm vi đầu vào: $-1.38 < t < 1.38$ (để đảm bảo độ chính xác).
 - Số vòng lặp: $N = 13$.
 - Độ trễ: 15 chu kỳ clock (1 Init + 13 Calc + 1 Done).
 - Kiến trúc: RTL Structural.
@@ -35,7 +35,7 @@ Hệ thống hoạt động dựa trên thuật toán CORDIC Hyperbolic:
 - Khởi tạo:
   + $Z_0 = t$ (Góc quay đầu vào).
   + $Y_0 = 0$.
-  + $X_0 = 1/K (Biểu diễn Q3.13 là 9872). Đây là giá trị khởi tạo để bù trừ hệ số dãn của thuật toán sau 13 vòng lặp.
+  + $X_0 = 1/K$ (Biểu diễn Q3.13 là 9872). Đây là giá trị khởi tạo để bù trừ hệ số dãn của thuật toán sau 13 vòng lặp.
 - Tính toán: Tại mỗi bước $i$, tùy thuộc vào dấu của $Z$:
   + Nếu $Z \ge 0$: Xoay vector theo chiều dương (Giảm Z, Tăng X, Y).
   + Nếu $Z < 0$: Xoay vector theo chiều âm (Tăng Z, Giảm X, Y).
@@ -57,6 +57,7 @@ Bước 3: Chạy Testbench
 - Set Top-level simulation là ExpApprox_tb.
 - Run mô phỏng trong khoảng 1 us.
 - Quan sát dạng sóng.
+
 Bước 4: Kiểm tra kết quảĐể dễ quan sát, hãy chuyển định dạng hiển thị của t_in và exp_out sang Decimal.
 
 6. Lưu ý quan trọng
