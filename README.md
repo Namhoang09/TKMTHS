@@ -58,7 +58,9 @@ Bước 3: Chạy Testbench
 - Run mô phỏng trong khoảng 1 us.
 - Quan sát dạng sóng.
 
-Bước 4: Kiểm tra kết quảĐể dễ quan sát, hãy chuyển định dạng hiển thị của t_in và exp_out sang Decimal.
+Bước 4: Kiểm tra kết quả
+
+Để dễ quan sát, hãy chuyển định dạng hiển thị của t_in và exp_out sang Decimal.
 
 6. Lưu ý quan trọng
 
