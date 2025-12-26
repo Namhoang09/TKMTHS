@@ -22,6 +22,7 @@ END ExpApprox;
 
 ARCHITECTURE Behavioral OF ExpApprox IS
     	CONSTANT K_INV : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(9872, DATA_WIDTH);
+
     	TYPE lut_type IS ARRAY (1 TO N) OF signed(DATA_WIDTH-1 DOWNTO 0);
     	CONSTANT LUT : lut_type := (
         	to_signed(4500, 16), -- i=1
@@ -41,7 +42,7 @@ ARCHITECTURE Behavioral OF ExpApprox IS
 
     	SIGNAL X, Y, Z : signed(DATA_WIDTH-1 DOWNTO 0);
     	SIGNAL X_next, Y_next, Z_next : signed(DATA_WIDTH-1 DOWNTO 0);
-    	SIGNAL i : integer RANGE 1 TO N + 1;
+    	SIGNAL i : integer RANGE 1 TO N;
     
     	TYPE state_type IS (IDLE, INIT, CALC, FINISH);
     	SIGNAL current_state, next_state : state_type;
@@ -52,34 +53,42 @@ BEGIN
     	BEGIN
         	IF (rst = '1') THEN
             		current_state <= IDLE;
-            		X <= (others => '0');
-            		Y <= (others => '0');
-            		Z <= (others => '0');
+			X <= (OTHERS => '0');
+        		Y <= (OTHERS => '0');
+        		Z <= (OTHERS => '0');
             		i <= 1;
        		ELSIF (clk'EVENT AND clk = '1') THEN
-            		current_state <= next_state;
             		IF (current_state = INIT) THEN
-                		X <= K_INV;           -- X = 1/K 
-                		Y <= (others => '0'); -- Y = 0
-                		Z <= signed(t);    -- Z = t
-                		i <= 1;
+                		IF (signed(t) = 0) THEN
+        				X <= to_signed(8192, DATA_WIDTH);
+        				Y <= (OTHERS => '0');
+        				Z <= (OTHERS => '0');
+        				i <= N; 
+    				ELSE
+        				X <= K_INV;           -- X = 1/K 
+        				Y <= (OTHERS => '0'); -- Y = 0
+        				Z <= signed(t);       -- Z = t
+        				i <= 1;
+    				END IF;
             		ELSIF (current_state = CALC) THEN
                 		X <= X_next;
                 		Y <= Y_next;
                 		Z <= Z_next;
-                		IF (i <= N) THEN
+                		IF (i < N) THEN
                     			i <= i + 1;
                 		END IF;
             		END IF;
+
+			current_state <= next_state;
         	END IF;
     	END PROCESS;
 
     	PROCESS(current_state, start, i, X, Y, Z, t)
         	VARIABLE shift_x, shift_y : signed(DATA_WIDTH-1 DOWNTO 0);
     	BEGIN
-        	next_state <= current_state;
+		next_state <= current_state;
         	done <= '0';
-        	exp <= (others => '0');
+        	exp <= (OTHERS => '0');
         
         	shift_x := shift_right(X, i);
         	shift_y := shift_right(Y, i);
@@ -95,31 +104,36 @@ BEGIN
                 		END IF;
 
             		WHEN INIT =>
-                		next_state <= CALC;
+                		IF (signed(t) = 0) THEN
+            				next_state <= FINISH;
+        			ELSE
+            				next_state <= CALC;
+        			END IF;
 
             		WHEN CALC =>
-                		IF (i > N) THEN
+                		IF (i = N) THEN
                     			next_state <= FINISH;
                 		ELSE
-                    			IF (Z >= 0) THEN
-                        			X_next <= X + shift_y;       	-- X + Y*2^-i
-                        			Y_next <= Y + shift_x;       	-- Y + X*2^-i
-                        			Z_next <= Z - LUT(i);  		-- Z - LUT[i]
-                   			ELSE
-                        			X_next <= X - shift_y;
-                        			Y_next <= Y - shift_x;
-                        			Z_next <= Z + LUT(i);
-                    			END IF;
                     			next_state <= CALC;
                 		END IF;
 
+				IF (Z > 0) THEN
+                        		X_next <= X + shift_y;       	-- X + Y*2^-i
+                        		Y_next <= Y + shift_x;       	-- Y + X*2^-i
+                        		Z_next <= Z - LUT(i);  		-- Z - LUT[i]
+                   		ELSE
+                        		X_next <= X - shift_y;
+                        		Y_next <= Y - shift_x;
+                        		Z_next <= Z + LUT(i);
+                    		END IF;
+
             		WHEN FINISH =>
-                		done <= '1';
-                		exp <= std_logic_vector(X + Y); 
+				done <= '1';
+				exp <= std_logic_vector(X + Y);
+                		 
                 		IF (start = '0') THEN
                     			next_state <= IDLE;
                 		END IF;
         	END CASE;
     	END PROCESS;
 END Behavioral;
-
