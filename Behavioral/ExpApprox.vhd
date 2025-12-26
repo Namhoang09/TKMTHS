@@ -21,7 +21,7 @@ ENTITY ExpApprox IS
 END ExpApprox;
 
 ARCHITECTURE Behavioral OF ExpApprox IS
-    	CONSTANT K_INV : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(9872, DATA_WIDTH);
+    	CONSTANT K_INV : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(9892, DATA_WIDTH);
 
     	TYPE lut_type IS ARRAY (1 TO N) OF signed(DATA_WIDTH-1 DOWNTO 0);
     	CONSTANT LUT : lut_type := (
@@ -46,6 +46,7 @@ ARCHITECTURE Behavioral OF ExpApprox IS
     
     	TYPE state_type IS (IDLE, INIT, CALC, FINISH);
     	SIGNAL current_state, next_state : state_type;
+	SIGNAL repeat_done : std_logic;
 
 BEGIN
 
@@ -57,6 +58,7 @@ BEGIN
         		Y <= (OTHERS => '0');
         		Z <= (OTHERS => '0');
             		i <= 1;
+			repeat_done <= '0';
        		ELSIF (clk'EVENT AND clk = '1') THEN
             		IF (current_state = INIT) THEN
                 		IF (signed(t) = 0) THEN
@@ -70,12 +72,18 @@ BEGIN
         				Z <= signed(t);       -- Z = t
         				i <= 1;
     				END IF;
+				repeat_done <= '0';
             		ELSIF (current_state = CALC) THEN
-                		X <= X_next;
+				X <= X_next;
                 		Y <= Y_next;
                 		Z <= Z_next;
-                		IF (i < N) THEN
+
+				IF ((i = 4 OR i = 13) AND repeat_done = '0') THEN
+					i <= i;
+					repeat_done <= '1';
+				ELSIF (i < N) THEN
                     			i <= i + 1;
+					repeat_done <= '0';
                 		END IF;
             		END IF;
 
@@ -111,11 +119,19 @@ BEGIN
         			END IF;
 
             		WHEN CALC =>
-                		IF (i = N) THEN
-                    			next_state <= FINISH;
-                		ELSE
-                    			next_state <= CALC;
-                		END IF;
+				IF (N = 4 OR N = 13) THEN
+					IF (i = N AND repeat_done = '1') THEN
+						next_state <= FINISH;
+					ELSE
+						next_state <= CALC;
+					END IF;
+				ELSE
+					IF (i = N) THEN
+						next_state <= FINISH;
+					ELSE
+						next_state <= CALC;
+					END IF;
+				END IF;
 
 				IF (Z > 0) THEN
                         		X_next <= X + shift_y;       	-- X + Y*2^-i
