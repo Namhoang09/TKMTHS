@@ -6,14 +6,15 @@ ENTITY Controller IS
     	GENERIC (N : integer := 13);
     	PORT (
         	clk 	: IN  std_logic;
-            rst 	: IN  std_logic;
-            start   : IN  std_logic;
+            	rst 	: IN  std_logic;
+            	start   : IN  std_logic;
+		zero	: IN  std_logic;
             
-            Sel     : OUT std_logic;
-            En      : OUT std_logic;
-			exp_ld  : OUT std_logic;
-            i		: OUT integer RANGE 1 TO N;
-            done    : OUT std_logic
+            	Sel     : OUT std_logic;
+            	En      : OUT std_logic;
+            	exp_ld  : OUT std_logic;
+            	i	: OUT integer RANGE 1 TO N;
+            	done    : OUT std_logic
     	);
 END Controller;
 
@@ -38,7 +39,11 @@ BEGIN
 					END IF;
 				WHEN S1 =>
 					i_calc <= 1;
-					State <= S2;
+					IF (zero = '1') THEN
+						State <= S3;
+					ELSE
+						State <= S2;
+					END IF;
 				WHEN S2 =>
 					IF (i_calc < N) THEN
 						i_calc <= i_calc + 1;
@@ -54,9 +59,8 @@ BEGIN
 		END IF;
 	END PROCESS;
 
-	Sel <= '1' WHEN (State = S1) ELSE '0';
-	En <= '1' WHEN (State = S1 OR State = S2) ELSE '0';
-	exp_ld <= '1' WHEN (State = S3) ELSE '0';
-	done <= '1' WHEN (State = S3) ELSE '0';
+	Sel <= '1' 	WHEN (State = S1) 		ELSE '0';
+	En <= '1' 	WHEN (State = S1 OR State = S2) ELSE '0';
+	exp_ld <= '1' 	WHEN (State = S3) 		ELSE '0';
+	done <= '1' 	WHEN (State = S3) 		ELSE '0';
 END Behavioral;
-

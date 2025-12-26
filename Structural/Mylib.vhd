@@ -17,19 +17,20 @@ PACKAGE Mylib IS
 
     	COMPONENT Datapath IS
         	GENERIC (
-					DATA_WIDTH 	: integer := 16;
-					N 			: integer := 13
-			);
+			DATA_WIDTH 	: integer := 16;
+			N 		: integer := 13
+		);
 
         	PORT (
             		clk 	: IN  std_logic;
             		rst 	: IN  std_logic;
             		Sel 	: IN  std_logic;
-            		En		: IN  std_logic;
-					exp_ld  : IN  std_logic;
-            		i		: IN  integer RANGE 1 TO N;            
+            		En	: IN  std_logic;
+			exp_ld  : IN  std_logic;
+            		i	: IN  integer RANGE 1 TO N;            
             		t       : IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 
+			zero    : OUT std_logic;
             		exp     : OUT std_logic_vector(DATA_WIDTH-1 DOWNTO 0)
         	);
     	END COMPONENT;
@@ -41,31 +42,30 @@ PACKAGE Mylib IS
             		clk 	: IN  std_logic;
             		rst 	: IN  std_logic;
             		start   : IN  std_logic;
+			zero	: IN  std_logic;
             
             		Sel     : OUT std_logic;
             		En      : OUT std_logic;
-					exp_ld  : OUT std_logic;
-            		i		: OUT integer RANGE 1 TO N;
+            		exp_ld  : OUT std_logic;
+            		i	: OUT integer RANGE 1 TO N;
             		done    : OUT std_logic
         	);
     	END COMPONENT;
 
-		COMPONENT ExpApprox IS
+	COMPONENT ExpApprox IS
     		GENERIC (
-					DATA_WIDTH 	: integer := 16; 
-					N 			: integer := 13
-			);
+			DATA_WIDTH 	: integer := 16; 
+			N 		: integer := 13
+		);
 
     		PORT (
-        			clk 	: IN  std_logic;
+        		clk 	: IN  std_logic;
             		rst 	: IN  std_logic;
             		start   : IN  std_logic;
-        			t     	: IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
+        		t     	: IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 
-					done    : OUT std_logic;
-        			exp  	: OUT std_logic_vector(DATA_WIDTH-1 DOWNTO 0)
+			done 	: OUT std_logic;
+        		exp  	: OUT std_logic_vector(DATA_WIDTH-1 DOWNTO 0)
     		);
 	END COMPONENT;
 END Mylib;
-
-

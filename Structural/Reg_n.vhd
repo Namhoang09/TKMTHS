@@ -19,7 +19,7 @@ BEGIN
     	PROCESS(clk, rst)
     	BEGIN
         	IF (rst = '1') THEN
-            		Q <= (others => '0');
+            		Q <= (OTHERS => '0');
         	ELSIF (clk'EVENT AND clk = '1') THEN
             		IF (En = '1') THEN
                 		Q <= D;
