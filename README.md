@@ -16,8 +16,8 @@ Thiết kế được tối ưu hóa cho FPGA với kiến trúc không sử d�
   + 13 bit phần thập phân.
   + Ví dụ: $1.0$ được biểu diễn là $8192$ (0010 0000 0000 0000).
 - Phạm vi đầu vào: $-1.38 < t < 1.38$ (để đảm bảo độ chính xác).
-- Số vòng lặp: $N = 13$.
-- Độ trễ: 15 chu kỳ clock (1 Init + 13 Calc + 1 Done).
+- Số vòng lặp: $N = 13$ (lặp lại vòng 4 và 13 để thỏa mãn điều kiện hội tụ).
+- Độ trễ: 16 chu kỳ clock (1 Init + 15 Calc + 1 Done(nếu dùng thanh ghi)).
 - Kiến trúc: RTL Structural.
 3. Cấu trúc thư mục
   
@@ -35,11 +35,12 @@ Hệ thống hoạt động dựa trên thuật toán CORDIC Hyperbolic:
 - Khởi tạo:
   + $Z_0 = t$ (Góc quay đầu vào).
   + $Y_0 = 0$.
-  + $X_0 = 1/K$ (Biểu diễn Q3.13 là 9872). Đây là giá trị khởi tạo để bù trừ hệ số dãn của thuật toán sau 13 vòng lặp.
+  + $X_0 = 1/K$ (Biểu diễn Q3.13 là 9892). Đây là giá trị khởi tạo để bù trừ hệ số nén của thuật toán sau 13 vòng lặp.
 - Tính toán: Tại mỗi bước $i$, tùy thuộc vào dấu của $Z$:
   + Nếu $Z \ge 0$: Xoay vector theo chiều dương (Giảm Z, Tăng X, Y).
   + Nếu $Z < 0$: Xoay vector theo chiều âm (Tăng Z, Giảm X, Y).
-  + Các phép nhân với $2^{-i}$ được thay thế bằng phép dịch phải shift_right.
+  + Các phép nhân với $2^{-i}$ được thay thế bằng phép dịch phải.
+  + Xử lý riêng trường hợp $t=0$ để tiết kiệm tài nguyên.
 - Kết quả:
   + Sau $N$ vòng lặp: $X_N \approx \cosh(t)$, $Y_N \approx \sinh(t)$.
   + Ngõ ra: $e^t = \cosh(t) + \sinh(t) = X_N + Y_N$.
@@ -55,12 +56,20 @@ Add tất cả các file vào Project và biên dịch theo đúng thứ tự �
 
 Bước 3: Chạy Testbench
 - Set Top-level simulation là ExpApprox_tb.
-- Run mô phỏng trong khoảng 1 us.
+- Run mô phỏng trong khoảng 700 ns.
 - Quan sát dạng sóng.
 
 Bước 4: Kiểm tra kết quả
 
 Để dễ quan sát, hãy chuyển định dạng hiển thị của t_in và exp_out sang Decimal.
+
+Kết quả mong đợi
+| t     | e^t    | exp   |
+| :---: | :---:  | :---: |
+| 1     | 2.7183 | 22268 |
+| 0.5   | 1.6487 | 13506 |
+| -0.5  | 0.6065 | 4969  |
+| 0     | 1      | 8192  |
 
 6. Lưu ý quan trọng
 
