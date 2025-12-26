@@ -22,6 +22,7 @@ ARCHITECTURE Behavioral OF Controller IS
 	TYPE State_type IS (S0, S1, S2, S3);
 	SIGNAL State : State_type;
 	SIGNAL i_calc : integer RANGE 1 TO N;
+	SIGNAL repeat_done : std_logic;
 
 BEGIN
 	i <= i_calc;
@@ -31,6 +32,7 @@ BEGIN
 		IF (rst = '1') THEN
 			State <= S0;
 			i_calc <= 1;
+			repeat_done <= '0';
 		ELSIF (clk'EVENT AND clk = '1') THEN
 			CASE State IS
 				WHEN S0 =>
@@ -39,17 +41,25 @@ BEGIN
 					END IF;
 				WHEN S1 =>
 					i_calc <= 1;
+					repeat_done <= '0';
 					IF (zero = '1') THEN
 						State <= S3;
 					ELSE
 						State <= S2;
 					END IF;
 				WHEN S2 =>
-					IF (i_calc < N) THEN
-						i_calc <= i_calc + 1;
-						State <= S2;
+					IF (((i_calc = 4) OR (i_calc = 13)) AND (repeat_done = '0')) THEN
+                        			i_calc <= i_calc; 
+                        			repeat_done <= '1'; 
+                        			State <= S2;
 					ELSE
-						State <= S3;
+						IF (i_calc < N) THEN
+							i_calc <= i_calc + 1;
+							repeat_done <= '0';
+							State <= S2;
+						ELSE
+							State <= S3;
+						END IF;
 					END IF;
 				WHEN S3 =>
 					State <= S0;

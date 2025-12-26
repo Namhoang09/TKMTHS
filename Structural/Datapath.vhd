@@ -25,7 +25,7 @@ ENTITY Datapath IS
 END Datapath;
 
 ARCHITECTURE Structural OF Datapath IS
-	CONSTANT INV_K : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(9872, DATA_WIDTH);
+	CONSTANT INV_K : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(9892, DATA_WIDTH);
 	CONSTANT ONE   : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(8192, DATA_WIDTH);
 
 	TYPE lut_type IS ARRAY (1 TO N) OF signed(DATA_WIDTH-1 DOWNTO 0);
