@@ -15,18 +15,20 @@ Thiết kế được tối ưu hóa cho FPGA với kiến trúc không sử d�
   + 2 bit phần nguyên.
   + 13 bit phần thập phân.
   + Ví dụ: $1.0$ được biểu diễn là $8192$ (0010 0000 0000 0000).
-- Phạm vi đầu vào: $-1.38 < t < 1.38$ (để đảm bảo độ chính xác).
+- Phạm vi đầu vào: $-1.3 < t < 1.3$ (để đảm bảo độ chính xác).
 - Số vòng lặp: $N = 13$ (lặp lại vòng 4 và 13 để thỏa mãn điều kiện hội tụ).
-- Độ trễ: 16 chu kỳ clock (1 Init + 15 Calc + 1 Done(nếu dùng thanh ghi)).
+- Độ trễ: 17 chu kỳ clock (1 Init + 15 Calc + 1 Done).
 - Kiến trúc: RTL Structural.
 3. Cấu trúc thư mục
   
 Thứ tự biên dịch quan trọng như sau:
 - Mylib.vhd: Package chứa khai báo các Component.
 - Reg_n.vhd: Thanh ghi 16-bit có tín hiệu Reset và Enable.
+  + Có thể lựa chọn $En = 0$ là giữ lại giá trị cũ hoặc gán giá trị bằng 0 (để dễ quan sát).
 - Datapath.vhd: Khối xử lý dữ liệu. Chứa bảng LUT, bộ cộng/trừ/dịch bit và các thanh ghi trạng thái X, Y, Z.
-  + Lưu ý: Ngõ ra exp được gán trực tiếp (Combinational Output) để đảm bảo không bị trễ nhịp khi tín hiệu done lên 1.
-- Controller.vhd: Khối điều khiển. Quản lý các trạng thái IDLE, INIT, CALC, FINISH và biến đếm i.
+  + Ngõ ra exp nếu được gán trực tiếp không qua thanh ghi sẽ giúp kết quả ra nhanh hơn 1 chu kỳ (sẽ đồng bộ với tín hiệu done khi Controller chỉ dùng S3).
+- Controller.vhd: Khối điều khiển. Quản lý các trạng thái IDLE (S0), INIT (S1), CALC (S2), FINISH (S3 và S4) và biến đếm i.
+  + Trạng thái FINISH có thể chia ra thành S3 (kích hoạt exp_ld cho phép tải kết quả qua thanh ghi) và S4 (kích hoạt done báo hiệu đã có kết quả) hoặc gộp lại chỉ dùng S3 (kích hoạt exp_ld và done báo hiệu đang nạp kết quả, khi đó done sẽ nhanh hơn exp 1 chu kỳ)
 - ExpApprox.vhd: Top-level Module. Kết nối Controller và Datapath.
 - ExpApprox_tb.vhd: Testbench để mô phỏng và kiểm tra kết quả.
 4. Nguyên lý hoạt động
@@ -56,12 +58,12 @@ Add tất cả các file vào Project và biên dịch theo đúng thứ tự �
 
 Bước 3: Chạy Testbench
 - Set Top-level simulation là ExpApprox_tb.
-- Run mô phỏng trong khoảng 700 ns.
+- Run mô phỏng trong khoảng 700 ns (test cả 4 trường hợp t = 1, 0.5, -0.5, 0).
 - Quan sát dạng sóng.
 
 Bước 4: Kiểm tra kết quả
 
-Để dễ quan sát, hãy chuyển định dạng hiển thị của t_in và exp_out sang Decimal.
+Để dễ quan sát, hãy chuyển định dạng hiển thị của t và exp sang Decimal.
 
 Kết quả mong đợi
 | t     | e^t    | exp   |
