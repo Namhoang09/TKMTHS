@@ -55,8 +55,7 @@ ARCHITECTURE Structural OF Datapath IS
 
 	SIGNAL is_zero : std_logic;
 
-	--SIGNAL exp_calc : std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
-
+	SIGNAL exp_calc : std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 BEGIN
 	is_zero <= '1' WHEN (signed(t) = 0) ELSE '0';
 	zero <= is_zero;
@@ -85,9 +84,9 @@ BEGIN
 			Y_calc <= Y - X_shift;
 			Z_calc <= Z + LUT(i);
 		END IF;
-
-		--exp_calc <= std_logic_vector(X_calc + Y_calc);
 	END PROCESS;
+
+	exp_calc <= std_logic_vector(ONE) WHEN (is_zero = '1') ELSE std_logic_vector(X + Y);
 
 	RegX: Reg_n 
 		GENERIC MAP (DATA_WIDTH) 
@@ -98,10 +97,7 @@ BEGIN
     	RegZ: Reg_n 
 		GENERIC MAP (DATA_WIDTH) 
 		PORT MAP (clk, rst, En, Z_next, Z_cur);
-	--RegExp: Reg_n
-		--GENERIC MAP (DATA_WIDTH) 
-		--PORT MAP (clk, rst, exp_ld, exp_calc, exp);
-
-	exp <= std_logic_vector(ONE) WHEN (exp_ld = '1' AND is_zero = '1') ELSE
-		std_logic_vector(X + Y) WHEN (exp_ld = '1') ELSE (OTHERS => '0');
+	RegExp: Reg_n
+		GENERIC MAP (DATA_WIDTH) 
+		PORT MAP (clk, rst, exp_ld, exp_calc, exp);
 END Structural;

@@ -19,7 +19,7 @@ ENTITY Controller IS
 END Controller;
 
 ARCHITECTURE Behavioral OF Controller IS
-	TYPE State_type IS (S0, S1, S2, S3);
+	TYPE State_type IS (S0, S1, S2, S3, S4);
 	SIGNAL State : State_type;
 	SIGNAL i_calc : integer RANGE 1 TO N;
 	SIGNAL repeat_done : std_logic;
@@ -52,16 +52,16 @@ BEGIN
                         			i_calc <= i_calc; 
                         			repeat_done <= '1'; 
                         			State <= S2;
+					ELSIF (i_calc < N) THEN
+						i_calc <= i_calc + 1;
+						repeat_done <= '0';
+						State <= S2;
 					ELSE
-						IF (i_calc < N) THEN
-							i_calc <= i_calc + 1;
-							repeat_done <= '0';
-							State <= S2;
-						ELSE
-							State <= S3;
-						END IF;
+						State <= S3;
 					END IF;
 				WHEN S3 =>
+					State <= S4;
+				WHEN S4 =>
 					State <= S0;
 				WHEN OTHERS =>
 					State <= S0;
@@ -72,5 +72,5 @@ BEGIN
 	Sel <= '1' 	WHEN (State = S1) 		ELSE '0';
 	En <= '1' 	WHEN (State = S1 OR State = S2) ELSE '0';
 	exp_ld <= '1' 	WHEN (State = S3) 		ELSE '0';
-	done <= '1' 	WHEN (State = S3) 		ELSE '0';
+	done <= '1' 	WHEN (State = S4) 		ELSE '0';
 END Behavioral;

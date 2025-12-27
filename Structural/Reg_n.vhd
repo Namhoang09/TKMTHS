@@ -23,6 +23,8 @@ BEGIN
         	ELSIF (clk'EVENT AND clk = '1') THEN
             		IF (En = '1') THEN
                 		Q <= D;
+			--ELSE
+				--Q <= (OTHERS => '0');
             		END IF;
         	END IF;
     	END PROCESS;
