@@ -133,7 +133,7 @@ BEGIN
 					END IF;
 				END IF;
 
-				IF (Z > 0) THEN
+				IF (Z >= 0) THEN
                         		X_next <= X + shift_y;       	-- X + Y*2^-i
                         		Y_next <= Y + shift_x;       	-- Y + X*2^-i
                         		Z_next <= Z - LUT(i);  		-- Z - LUT[i]
@@ -153,3 +153,4 @@ BEGIN
         	END CASE;
     	END PROCESS;
 END Behavioral;
+
