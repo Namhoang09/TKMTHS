@@ -2,6 +2,15 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 
 PACKAGE Mylib IS
+	CONSTANT INV_K_VAL : integer := 9892;
+    	CONSTANT ONE_VAL   : integer := 8192;
+
+	TYPE array_type IS ARRAY (1 TO 13) OF integer;
+    	CONSTANT LUT_INT : array_type := (
+        	4500, 2092, 1029, 513, 256, 128, 64, 
+        	32, 16, 8, 4, 2, 1
+    	);
+
     	COMPONENT Reg_n IS
         	GENERIC (DATA_WIDTH : integer := 16);
 

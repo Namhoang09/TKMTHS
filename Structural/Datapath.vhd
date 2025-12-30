@@ -25,25 +25,19 @@ ENTITY Datapath IS
 END Datapath;
 
 ARCHITECTURE Structural OF Datapath IS
-	CONSTANT INV_K : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(9892, DATA_WIDTH);
-	CONSTANT ONE   : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(8192, DATA_WIDTH);
+	CONSTANT INV_K : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(INV_K_VAL, DATA_WIDTH);
+	CONSTANT ONE   : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(ONE_VAL, DATA_WIDTH);
 
 	TYPE lut_type IS ARRAY (1 TO N) OF signed(DATA_WIDTH-1 DOWNTO 0);
-	CONSTANT LUT : lut_type := (
-        	to_signed(4500, DATA_WIDTH), -- i=1
-        	to_signed(2092, DATA_WIDTH), -- i=2
-        	to_signed(1029, DATA_WIDTH), -- i=3
-        	to_signed(513, DATA_WIDTH),  -- i=4
-        	to_signed(256, DATA_WIDTH),  -- i=5
-        	to_signed(128, DATA_WIDTH),  -- i=6
-        	to_signed(64, DATA_WIDTH),   -- i=7
-        	to_signed(32, DATA_WIDTH),   -- i=8
-        	to_signed(16, DATA_WIDTH),   -- i=9
-        	to_signed(8, DATA_WIDTH),    -- i=10
-        	to_signed(4, DATA_WIDTH),    -- i=11
-        	to_signed(2, DATA_WIDTH),    -- i=12
-        	to_signed(1, DATA_WIDTH)     -- i=13
-    	);
+    	FUNCTION init_lut RETURN lut_type IS
+        	VARIABLE temp_lut : lut_type;
+    	BEGIN
+        	FOR k IN 1 TO N LOOP
+            		temp_lut(k) := to_signed(LUT_INT(k), DATA_WIDTH);
+        	END LOOP;
+        	RETURN temp_lut;
+    	END FUNCTION;
+    	CONSTANT LUT : lut_type := init_lut;
 	
 	SIGNAL X, X_calc : signed(DATA_WIDTH-1 DOWNTO 0);
 	SIGNAL Y, Y_calc : signed(DATA_WIDTH-1 DOWNTO 0);
@@ -54,11 +48,10 @@ ARCHITECTURE Structural OF Datapath IS
 	SIGNAL Z_cur, Z_next : std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 
 	SIGNAL is_zero : std_logic;
-
 	SIGNAL exp_calc : std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 BEGIN
 	is_zero <= '1' WHEN (signed(t) = 0) ELSE '0';
-	zero <= is_zero;
+	zero    <= is_zero;
 
 	X_next <= std_logic_vector(INV_K) WHEN Sel = '1' ELSE std_logic_vector(X_calc);
 	Y_next <= (OTHERS => '0') 	  WHEN Sel = '1' ELSE std_logic_vector(Y_calc);
@@ -97,6 +90,7 @@ BEGIN
     	RegZ: Reg_n 
 		GENERIC MAP (DATA_WIDTH) 
 		PORT MAP (clk, rst, En, Z_next, Z_cur);
+
 	RegExp: Reg_n
 		GENERIC MAP (DATA_WIDTH) 
 		PORT MAP (clk, rst, exp_ld, exp_calc, exp);
