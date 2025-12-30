@@ -5,15 +5,15 @@ USE ieee.numeric_std.all;
 ENTITY Controller IS
     	GENERIC (N : integer := 13);
     	PORT (
-        	clk 	: IN  std_logic;
+        		clk 	: IN  std_logic;
             	rst 	: IN  std_logic;
             	start   : IN  std_logic;
-		zero	: IN  std_logic;
+				zero	: IN  std_logic;
             
             	Sel     : OUT std_logic;
             	En      : OUT std_logic;
             	exp_ld  : OUT std_logic;
-            	i	: OUT integer RANGE 1 TO N;
+            	i		: OUT integer RANGE 1 TO N;
             	done    : OUT std_logic
     	);
 END Controller;
@@ -21,11 +21,11 @@ END Controller;
 ARCHITECTURE Behavioral OF Controller IS
 	TYPE State_type IS (S0, S1, S2, S3, S4);
 	SIGNAL state_reg, state_next : State_type;
-    	SIGNAL i_reg, i_next         : integer RANGE 1 TO N;
-    	SIGNAL rep_reg, rep_next     : std_logic;
+    SIGNAL i_reg, i_next         : integer RANGE 1 TO N;
+    SIGNAL rep_reg, rep_next     : std_logic;
 
 BEGIN
-	i <= i_reg;
+		i <= i_reg;
 
     	PROCESS(clk, rst)
     	BEGIN
@@ -50,7 +50,7 @@ BEGIN
             		WHEN S0 =>
                 		i_next   <= 1;       
                 		rep_next <= '0';
-                            	IF (start = '1') THEN
+                        IF (start = '1') THEN
                     			state_next <= S1;
                 		END IF;
 
@@ -90,3 +90,4 @@ BEGIN
     	exp_ld <= '1' WHEN (state_reg = S3) ELSE '0';
     	done   <= '1' WHEN (state_reg = S4) ELSE '0';
 END Behavioral;
+
