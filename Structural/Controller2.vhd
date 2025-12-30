@@ -5,16 +5,16 @@ USE ieee.numeric_std.all;
 ENTITY Controller IS
     	GENERIC (N : integer := 13);
     	PORT (
-        	clk 	  : IN  std_logic;
-          rst 	  : IN  std_logic;
-          start   : IN  std_logic;
-		      zero	  : IN  std_logic;
+        	clk 	: IN  std_logic;
+          	rst 	: IN  std_logic;
+          	start   : IN  std_logic;
+		    zero	: IN  std_logic;
             
-          Sel     : OUT std_logic;
-          En      : OUT std_logic;
-          exp_ld  : OUT std_logic;
-          i	      : OUT integer RANGE 1 TO N;
-          done    : OUT std_logic
+          	Sel     : OUT std_logic;
+          	En      : OUT std_logic;
+          	exp_ld  : OUT std_logic;
+          	i	    : OUT integer RANGE 1 TO N;
+          	done    : OUT std_logic
     	);
 END Controller;
 
@@ -40,7 +40,7 @@ BEGIN
                 		    rep_reg <= '0';
                             IF (start = '1') THEN
                     			      state_reg <= S1;
-                		        END IF;
+                		    END IF;
 
             		    WHEN S1 =>
                 		    IF (zero = '1') THEN
