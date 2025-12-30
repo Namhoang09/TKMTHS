@@ -20,57 +20,73 @@ END Controller;
 
 ARCHITECTURE Behavioral OF Controller IS
 	TYPE State_type IS (S0, S1, S2, S3, S4);
-	SIGNAL State : State_type;
-	SIGNAL i_calc : integer RANGE 1 TO N;
-	SIGNAL repeat_done : std_logic;
+	SIGNAL state_reg, state_next : State_type;
+    	SIGNAL i_reg, i_next         : integer RANGE 1 TO N;
+    	SIGNAL rep_reg, rep_next     : std_logic;
 
 BEGIN
-	i <= i_calc;
+	i <= i_reg;
 
-	PROCESS(clk, rst)
-	BEGIN
-		IF (rst = '1') THEN
-			State <= S0;
-			i_calc <= 1;
-			repeat_done <= '0';
-		ELSIF (clk'EVENT AND clk = '1') THEN
-			CASE State IS
-				WHEN S0 =>
-					IF (start = '1') THEN
-						State <= S1;
-					END IF;
-				WHEN S1 =>
-					i_calc <= 1;
-					repeat_done <= '0';
-					IF (zero = '1') THEN
-						State <= S3;
-					ELSE
-						State <= S2;
-					END IF;
-				WHEN S2 =>
-					IF (((i_calc = 4) OR (i_calc = 13)) AND (repeat_done = '0')) THEN
-                        			i_calc <= i_calc; 
-                        			repeat_done <= '1'; 
-                        			State <= S2;
-					ELSIF (i_calc < N) THEN
-						i_calc <= i_calc + 1;
-						repeat_done <= '0';
-						State <= S2;
-					ELSE
-						State <= S3;
-					END IF;
-				WHEN S3 =>
-					State <= S4;
-				WHEN S4 =>
-					State <= S0;
-				WHEN OTHERS =>
-					State <= S0;
-			END CASE;
-		END IF;
-	END PROCESS;
+    	PROCESS(clk, rst)
+    	BEGIN
+        	IF (rst = '1') THEN
+            		state_reg <= S0;
+            		i_reg     <= 1;
+            		rep_reg   <= '0';
+        	ELSIF (clk'EVENT AND clk = '1') THEN
+            		state_reg <= state_next;
+            		i_reg     <= i_next;
+            		rep_reg   <= rep_next;
+        	END IF;
+    	END PROCESS;
 
-	Sel <= '1' 	WHEN (State = S1) 		ELSE '0';
-	En <= '1' 	WHEN (State = S1 OR State = S2) ELSE '0';
-	exp_ld <= '1' 	WHEN (State = S3) 		ELSE '0';
-	done <= '1' 	WHEN (State = S4) 		ELSE '0';
+    	PROCESS(state_reg, i_reg, rep_reg, start, zero)
+    	BEGIN
+        	state_next <= state_reg;
+        	i_next     <= i_reg;
+        	rep_next   <= rep_reg;
+
+        	CASE state_reg IS
+            		WHEN S0 =>
+                		i_next   <= 1;       
+                		rep_next <= '0';
+                            	IF (start = '1') THEN
+                    			state_next <= S1;
+                		END IF;
+
+            		WHEN S1 =>
+                		IF (zero = '1') THEN
+                    			state_next <= S3;
+                		ELSE
+                    			state_next <= S2;
+                		END IF;
+
+            		WHEN S2 =>
+                		IF ((i_reg = 4 OR i_reg = 13) AND rep_reg = '0') THEN
+                    			i_next     <= i_reg; 
+                    			rep_next   <= '1'; 
+                    			state_next <= S2; 
+                		ELSIF (i_reg < N) THEN
+                    			i_next     <= i_reg + 1;
+                    			rep_next   <= '0'; 
+                    			state_next <= S2;   
+                		ELSE
+                    			state_next <= S3; 
+                		END IF;
+
+            		WHEN S3 =>
+                		state_next <= S4;
+
+            		WHEN S4 =>
+                		state_next <= S0;
+
+            		WHEN OTHERS =>
+                		state_next <= S0;
+        	END CASE;
+    	END PROCESS;
+
+    	Sel    <= '1' WHEN (state_reg = S1) ELSE '0';
+    	En     <= '1' WHEN (state_reg = S1 OR state_reg = S2) ELSE '0';
+    	exp_ld <= '1' WHEN (state_reg = S3) ELSE '0';
+    	done   <= '1' WHEN (state_reg = S4) ELSE '0';
 END Behavioral;
