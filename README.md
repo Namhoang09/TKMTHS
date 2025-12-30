@@ -22,15 +22,16 @@ Thiết kế được tối ưu hóa cho FPGA với kiến trúc không sử d�
 3. Cấu trúc thư mục
   
 Thứ tự biên dịch quan trọng như sau:
-- Mylib.vhd: Package chứa khai báo các Component.
-- Reg_n.vhd: Thanh ghi 16-bit có tín hiệu Reset và Enable.
+- Mylib: Package chứa khai báo các Component.
+- Reg_n: Thanh ghi 16-bit có tín hiệu Reset và Enable.
   + Có thể lựa chọn $En = 0$ là giữ lại giá trị cũ hoặc gán giá trị bằng 0 (để dễ quan sát).
-- Datapath.vhd: Khối xử lý dữ liệu. Chứa bảng LUT, bộ cộng/trừ/dịch bit và các thanh ghi trạng thái X, Y, Z.
+- Datapath: Khối xử lý dữ liệu. Chứa bảng LUT, bộ cộng/trừ/dịch bit và các thanh ghi trạng thái X, Y, Z.
   + Ngõ ra exp nếu được gán trực tiếp không qua thanh ghi sẽ giúp kết quả ra nhanh hơn 1 chu kỳ (sẽ đồng bộ với tín hiệu done khi Controller chỉ dùng S3).
-- Controller.vhd: Khối điều khiển. Quản lý các trạng thái IDLE (S0), INIT (S1), CALC (S2), FINISH (S3 và S4) và biến đếm i.
+- Controller: Khối điều khiển. Quản lý các trạng thái IDLE (S0), INIT (S1), CALC (S2), FINISH (S3 và S4) và biến đếm i.
   + Trạng thái FINISH có thể chia ra thành S3 (kích hoạt exp_ld cho phép tải kết quả qua thanh ghi) và S4 (kích hoạt done báo hiệu đã có kết quả) hoặc gộp lại chỉ dùng S3 (kích hoạt exp_ld và done báo hiệu đang nạp kết quả, khi đó done sẽ nhanh hơn exp 1 chu kỳ)
-- ExpApprox.vhd: Top-level Module. Kết nối Controller và Datapath.
-- ExpApprox_tb.vhd: Testbench để mô phỏng và kiểm tra kết quả.
+  + Project sử dụng chính là file Controller2.vhd. Controller.vhd được chia thành 2 process (chuyên nghiệp hơn) còn Controller2.vhd xử lý tất cả trong 1 process. Tuy nhiên, Controller2.vhd lợi thế hơn trong trường hợp start = 1 ngay trên cạnh lên của xung nhịp. Khi đó, nếu xử lý ngay trong 1 process thì trạng thái ngay lập tức chuyển sang S1, còn nếu sử dụng 2 process thì start = 1 chỉ cập nhật state_next, phải đợi thêm 1 chu kỳ nữa để chuyển sang S1 (khi đó tổng thời gian trễ là 18 chu kỳ). Để tối ưu thời gian xử lý nên chọn Controller xử lý 1 process.
+- ExpApprox: Top-level Module. Kết nối Controller và Datapath.
+- ExpApprox_tb: Testbench để mô phỏng và kiểm tra kết quả.
 4. Nguyên lý hoạt động
   
 Hệ thống hoạt động dựa trên thuật toán CORDIC Hyperbolic:
