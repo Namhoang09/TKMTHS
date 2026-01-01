@@ -64,7 +64,7 @@ PACKAGE Mylib IS
 	COMPONENT ExpApprox IS
     		GENERIC (
 				DATA_WIDTH 	: integer := 16; 
-				N 		: integer := 13
+				N 			: integer := 13
 			);
 
     		PORT (
@@ -78,4 +78,5 @@ PACKAGE Mylib IS
     		);
 	END COMPONENT;
 END Mylib;
+
 
