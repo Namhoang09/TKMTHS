@@ -6,7 +6,7 @@ USE work.Mylib.all;
 ENTITY Datapath IS
 	GENERIC (
 		DATA_WIDTH 	: integer := 16;
-		N		: integer := 13
+		N			: integer := 13
 	);
 
 	PORT (
@@ -95,4 +95,5 @@ BEGIN
 		GENERIC MAP (DATA_WIDTH) 
 		PORT MAP (clk, rst, exp_ld, exp_calc, exp);
 END Structural;
+
 
