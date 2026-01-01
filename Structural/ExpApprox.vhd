@@ -5,7 +5,7 @@ USE work.Mylib.all;
 ENTITY ExpApprox IS
     	GENERIC (
 			DATA_WIDTH 	: integer := 16; 
-			N 		: integer := 13
+			N 			: integer := 13
 		);
 
     	PORT (
@@ -34,4 +34,5 @@ BEGIN
 		GENERIC MAP (DATA_WIDTH, N)
 		PORT MAP(clk, rst, Sel, En, exp_ld, i, t, zero, exp);
 END Structure;
+
 
