@@ -6,11 +6,11 @@ ENTITY Cordic_stage IS
     	GENERIC (DATA_WIDTH : integer := 16);
 
     	PORT (
-        	X	: IN  signed(DATA_WIDTH-1 DOWNTO 0);
-        	Y	: IN  signed(DATA_WIDTH-1 DOWNTO 0);
-        	Z	: IN  signed(DATA_WIDTH-1 DOWNTO 0);
+        	X		: IN  signed(DATA_WIDTH-1 DOWNTO 0);
+        	Y		: IN  signed(DATA_WIDTH-1 DOWNTO 0);
+        	Z		: IN  signed(DATA_WIDTH-1 DOWNTO 0);
         	lut     : IN  signed(DATA_WIDTH-1 DOWNTO 0);
-		i       : IN  integer;
+			i       : IN  integer;
 
         	X_out 	: OUT signed(DATA_WIDTH-1 DOWNTO 0);
         	Y_out	: OUT signed(DATA_WIDTH-1 DOWNTO 0);
@@ -38,3 +38,4 @@ BEGIN
         	END IF;
     	END PROCESS;
 END Behavioral;
+
