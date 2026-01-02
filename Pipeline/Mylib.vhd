@@ -31,17 +31,14 @@ PACKAGE Mylib IS
     	END COMPONENT;
 
 	COMPONENT Cordic_stage IS
-    		GENERIC (
-			DATA_WIDTH 	: integer := 16; 
-			N 		: integer := 13
-		);
+    		GENERIC (DATA_WIDTH : integer := 16);
 
     		PORT (
         		X	: IN  signed(DATA_WIDTH-1 DOWNTO 0);
         		Y	: IN  signed(DATA_WIDTH-1 DOWNTO 0);
         		Z	: IN  signed(DATA_WIDTH-1 DOWNTO 0);
         		lut     : IN  signed(DATA_WIDTH-1 DOWNTO 0);
-			i       : IN  integer RANGE 1 TO N;
+			i       : IN  integer;
 
         		X_out 	: OUT signed(DATA_WIDTH-1 DOWNTO 0);
         		Y_out	: OUT signed(DATA_WIDTH-1 DOWNTO 0);
@@ -62,7 +59,7 @@ PACKAGE Mylib IS
             		Sel 	: IN  std_logic;
             		En	: IN  std_logic;
 			exp_ld  : IN  std_logic;
-            		phase	: IN  integer RANGE 1 TO ((N + 2) / NUM_STAGES);            
+            		phase	: IN  integer RANGE 1 TO (N + 2);            
             		t       : IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 
 			zero    : OUT std_logic;
@@ -85,7 +82,7 @@ PACKAGE Mylib IS
             		Sel     : OUT std_logic;
             		En      : OUT std_logic;
             		exp_ld  : OUT std_logic;
-            		phase	: OUT integer RANGE 1 TO ((N + 2) / NUM_STAGES);
+            		phase	: OUT integer RANGE 1 TO (N + 2);
             		done    : OUT std_logic
         	);
     	END COMPONENT;

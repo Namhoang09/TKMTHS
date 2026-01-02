@@ -17,7 +17,7 @@ ENTITY Controller IS
           	Sel     : OUT std_logic;
           	En      : OUT std_logic;
           	exp_ld  : OUT std_logic;
-          	phase	: OUT integer RANGE 1 TO ((N + 2) / NUM_STAGES);
+          	phase	: OUT integer RANGE 1 TO (N + 2);
           	done    : OUT std_logic
     	);
 END Controller;
@@ -25,8 +25,9 @@ END Controller;
 ARCHITECTURE Behavioral OF Controller IS
 	TYPE State_type IS (S0, S1, S2, S3, S4);
 	SIGNAL state_reg : State_type;
-    	SIGNAL phase_reg : integer RANGE 1 TO ((N + 2) / NUM_STAGES);
+    	SIGNAL phase_reg : integer RANGE 1 TO (N + 2);
 
+	CONSTANT NUM_PHASES : integer := (N + 2 + NUM_STAGES - 1) / NUM_STAGES;
 BEGIN
 	phase <= phase_reg;
 
@@ -51,7 +52,7 @@ BEGIN
                 		    	END IF;
 
             		    	WHEN S2 =>
-                		    	IF (phase_reg < ((N + 2) / NUM_STAGES)) THEN
+                		    	IF (phase_reg < NUM_PHASES) THEN
                     			  	phase_reg     <= phase_reg + 1;
                     			  	state_reg <= S2;   
                 		    	ELSE

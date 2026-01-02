@@ -3,17 +3,14 @@ USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
 
 ENTITY Cordic_stage IS
-    	GENERIC (
-		DATA_WIDTH 	: integer := 16; 
-		N 		: integer := 13
-	);
+    	GENERIC (DATA_WIDTH : integer := 16);
 
     	PORT (
         	X	: IN  signed(DATA_WIDTH-1 DOWNTO 0);
         	Y	: IN  signed(DATA_WIDTH-1 DOWNTO 0);
         	Z	: IN  signed(DATA_WIDTH-1 DOWNTO 0);
         	lut     : IN  signed(DATA_WIDTH-1 DOWNTO 0);
-		i       : IN  integer RANGE 1 TO N;
+		i       : IN  integer;
 
         	X_out 	: OUT signed(DATA_WIDTH-1 DOWNTO 0);
         	Y_out	: OUT signed(DATA_WIDTH-1 DOWNTO 0);

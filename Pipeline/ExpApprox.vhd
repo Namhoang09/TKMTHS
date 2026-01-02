@@ -23,7 +23,7 @@ END ExpApprox;
 ARCHITECTURE Structure OF ExpApprox IS
 	SIGNAL Sel 	: std_logic;
 	SIGNAL En	: std_logic;
-	SIGNAL phase	: integer RANGE 1 TO ((N + 2) / NUM_STAGES);
+	SIGNAL phase	: integer RANGE 1 TO (N + 2);
 	SIGNAL exp_ld 	: std_logic; 
 	SIGNAL zero 	: std_logic; 
 BEGIN

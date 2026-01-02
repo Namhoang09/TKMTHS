@@ -16,7 +16,7 @@ ENTITY Datapath IS
             	Sel 	: IN  std_logic;
             	En      : IN  std_logic;
             	exp_ld  : IN  std_logic;
-            	phase	: IN  integer RANGE 1 TO ((N + 2) / NUM_STAGES);            
+            	phase	: IN  integer RANGE 1 TO (N + 2);            
             	t       : IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 
 		zero    : OUT std_logic;
@@ -28,15 +28,21 @@ ARCHITECTURE Structural OF Datapath IS
 	CONSTANT INV_K : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(INV_K_VAL, DATA_WIDTH);
 	CONSTANT ONE   : signed(DATA_WIDTH-1 DOWNTO 0) := to_signed(ONE_VAL, DATA_WIDTH);
 
-	TYPE schedule_type IS ARRAY (1 TO ((N + 2) / NUM_STAGES), 1 TO NUM_STAGES) OF integer;
+	CONSTANT NUM_PHASES : integer := (N + 2 + NUM_STAGES - 1) / NUM_STAGES;
+
+	TYPE schedule_type IS ARRAY (1 TO NUM_PHASES, 1 TO NUM_STAGES) OF integer;
     	FUNCTION init_matrix RETURN schedule_type IS
         	VARIABLE mat : schedule_type;
         	VARIABLE seq_idx : integer := 1;
     	BEGIN
-        	FOR p IN 1 TO ((N + 2) / NUM_STAGES) LOOP
+        	FOR p IN 1 TO NUM_PHASES LOOP
             		FOR s IN 1 TO NUM_STAGES LOOP
-                		mat(p, s) := SEQ(seq_idx);
-                		seq_idx := seq_idx + 1;
+				IF (seq_idx <= N + 2) THEN
+                			mat(p, s) := SEQ(seq_idx);
+                			seq_idx := seq_idx + 1;
+				ELSE
+					mat(p, s) := DATA_WIDTH + 1;
+				END IF;
             		END LOOP;
         	END LOOP;
         	RETURN mat;
@@ -86,17 +92,23 @@ BEGIN
     	Z(0) <= signed(Z_cur);
 
 	Pipeline: FOR k IN 1 TO NUM_STAGES GENERATE
-        	SIGNAL i : integer RANGE 1 TO N;
+        	SIGNAL i : integer;
         	SIGNAL lut_val : signed(DATA_WIDTH-1 DOWNTO 0);
     	BEGIN
         	PROCESS(phase)
+			VARIABLE idx_val : integer;
         	BEGIN
-            		i <= MATRIX(phase, k);
-            		lut_val <= LUT(MATRIX(phase, k));
+			idx_val := MATRIX(phase, k);
+            		i <= idx_val;
+			IF (idx_val <= N) THEN
+            			lut_val <= LUT(idx_val);
+			ELSE
+				lut_val <= (OTHERS => '0');
+			END IF;
         	END PROCESS;
 
         	Stage_Inst: Cordic_stage 
-            		GENERIC MAP (DATA_WIDTH, N)
+            		GENERIC MAP (DATA_WIDTH)
             		PORT MAP (
                 		X    => X(k-1), 
                 		Y    => Y(k-1), 
