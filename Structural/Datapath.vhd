@@ -57,6 +57,16 @@ BEGIN
 	Y_next <= (OTHERS => '0') 	  		WHEN Sel = '1' ELSE std_logic_vector(Y_calc);
 	Z_next <= t 			  			WHEN Sel = '1' ELSE std_logic_vector(Z_calc);
 
+	RegX: Reg_n 
+		GENERIC MAP (DATA_WIDTH) 
+		PORT MAP (clk, rst, En, X_next, X_cur);
+    RegY: Reg_n 
+		GENERIC MAP (DATA_WIDTH) 
+		PORT MAP (clk, rst, En, Y_next, Y_cur);
+    RegZ: Reg_n 
+		GENERIC MAP (DATA_WIDTH) 
+		PORT MAP (clk, rst, En, Z_next, Z_cur);
+
 	X <= signed(X_cur);
 	Y <= signed(Y_cur);
 	Z <= signed(Z_cur);
@@ -81,19 +91,10 @@ BEGIN
 
 	exp_calc <= std_logic_vector(ONE) WHEN (is_zero = '1') ELSE std_logic_vector(X + Y);
 
-	RegX: Reg_n 
-		GENERIC MAP (DATA_WIDTH) 
-		PORT MAP (clk, rst, En, X_next, X_cur);
-    RegY: Reg_n 
-		GENERIC MAP (DATA_WIDTH) 
-		PORT MAP (clk, rst, En, Y_next, Y_cur);
-    RegZ: Reg_n 
-		GENERIC MAP (DATA_WIDTH) 
-		PORT MAP (clk, rst, En, Z_next, Z_cur);
-
 	RegExp: Reg_n
 		GENERIC MAP (DATA_WIDTH) 
 		PORT MAP (clk, rst, exp_ld, exp_calc, exp);
 END Structural;
+
 
 
