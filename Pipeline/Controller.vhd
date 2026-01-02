@@ -4,15 +4,15 @@ USE ieee.numeric_std.all;
 
 ENTITY Controller IS
     	GENERIC (
-		N 		: integer := 13;
-		NUM_STAGES 	: integer := 3
-	);
+			N 			: integer := 13;
+			NUM_STAGES 	: integer := 3
+		);
 
     	PORT (
         	clk 	: IN  std_logic;
           	rst 	: IN  std_logic;
           	start   : IN  std_logic;
-		zero	: IN  std_logic;
+			zero	: IN  std_logic;
             
           	Sel     : OUT std_logic;
           	En      : OUT std_logic;
@@ -25,11 +25,11 @@ END Controller;
 ARCHITECTURE Behavioral OF Controller IS
 	TYPE State_type IS (S0, S1, S2, S3, S4);
 	SIGNAL state_reg : State_type;
-    	SIGNAL phase_reg : integer RANGE 1 TO (N + 2);
+    SIGNAL phase_reg : integer RANGE 1 TO (N + 2);
 
 	CONSTANT NUM_PHASES : integer := (N + 2 + NUM_STAGES - 1) / NUM_STAGES;
 BEGIN
-	phase <= phase_reg;
+		phase <= phase_reg;
 
     	PROCESS(clk, rst)
     	BEGIN
@@ -40,7 +40,7 @@ BEGIN
             		CASE state_reg IS
             		    	WHEN S0 =>
                 		    	phase_reg   <= 1;       
-                            		IF (start = '1') THEN
+                            	IF (start = '1') THEN
                     				state_reg <= S1;
                 		    	END IF;
 
@@ -76,3 +76,4 @@ BEGIN
     	exp_ld <= '1' WHEN (state_reg = S3) ELSE '0';
     	done   <= '1' WHEN (state_reg = S4) ELSE '0';
 END Behavioral;
+
