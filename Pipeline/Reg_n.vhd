@@ -5,8 +5,8 @@ ENTITY Reg_n IS
     	GENERIC (DATA_WIDTH : integer := 16);
 
     	PORT (
-        	clk 	: IN  std_logic;
-        	rst 	: IN  std_logic;
+        	clk : IN  std_logic;
+        	rst : IN  std_logic;
         	En 	: IN  std_logic;
         	D 	: IN  std_logic_vector(DATA_WIDTH-1 DOWNTO 0);
 
@@ -29,4 +29,5 @@ BEGIN
         	END IF;
     	END PROCESS;
 END REG;
+
 
