@@ -110,16 +110,16 @@ BEGIN
         	Stage_Inst: Cordic_stage 
             		GENERIC MAP (DATA_WIDTH)
             		PORT MAP (
-                		X    => X(k-1), 
-                		Y    => Y(k-1), 
-                		Z    => Z(k-1),
-                		lut => lut_val,
-                		i   => i,
+                		X    	=> X(k-1), 
+                		Y    	=> Y(k-1), 
+                		Z    	=> Z(k-1),
+                		lut 	=> lut_val,
+                		i   	=> i,
                 		X_out   => X(k),
                 		Y_out   => Y(k),
                 		Z_out   => Z(k)
             		);
-    	END GENERATE Pipeline;
+    END GENERATE Pipeline;
 
 	exp_calc <= std_logic_vector(ONE) WHEN (is_zero = '1') ELSE std_logic_vector(signed(X_cur) + signed(Y_cur));
 
@@ -127,6 +127,7 @@ BEGIN
 		GENERIC MAP (DATA_WIDTH) 
 		PORT MAP (clk, rst, exp_ld, exp_calc, exp);
 END Structural;
+
 
 
 
