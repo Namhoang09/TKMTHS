@@ -26,9 +26,9 @@ ARCHITECTURE Behavioral OF ExpApprox_tb IS
     	SIGNAL clk      : std_logic := '0';
     	SIGNAL rst      : std_logic := '0';
     	SIGNAL start    : std_logic := '0';
-    	SIGNAL t        : std_logic_vector(15 downto 0) := (others => '0');
+    	SIGNAL t        : std_logic_vector(15 DOWNTO 0) := (OTHERS => '0');
     	SIGNAL done     : std_logic;
-    	SIGNAL exp      : std_logic_vector(15 downto 0);
+    	SIGNAL exp      : std_logic_vector(15 DOWNTO 0);
 
         CONSTANT CLK_PERIOD : time := 10 ns;
 
@@ -97,4 +97,5 @@ BEGIN
         WAIT;
     END PROCESS;
 END Behavioral;
+
 
